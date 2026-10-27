@@ -1,0 +1,9 @@
+export type Character = 'elena' | 'jenna' | 'jeremy' | 'bonnie' | 'caroline' | 'matt' | 'tyler' | 'stefan' | 'vicki';
+export type Stat = 'affinity' | 'trust' | 'attraction' | 'curiosity' | 'suspicion';
+export type Effect = { person: Character; stat: Stat; amount: number };
+export type Line = { speaker?: Character | 'journal' | 'narration' | 'thought' | 'system'; text: string; expression?: string };
+export type Choice = { label: string; lines?: Line[]; effects?: Effect[]; flags?: Record<string, string | boolean>; next?: string };
+export type Node = { id: string; type: 'line' | 'choice' | 'outfit' | 'explore' | 'end'; line?: Line; choices?: Choice[]; next?: string; locations?: { id: string; name: string; characters: { id: string; name: string; next: string }[] }[]; required?: string[]; outfit?: boolean };
+export type Scene = { id: string; title: string; background: string; nodes: Node[]; start: string; nextScene?: string };
+export type Relationship = Record<Stat, number>;
+export type Save = { scene: number; node: string; location?: string; outfit: 1 | 2; partyOutfit: 1 | 2; relationships: Record<Character, Relationship>; flags: Record<string, string | boolean>; visited: string[]; history: string[] };

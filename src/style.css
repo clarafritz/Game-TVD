@@ -1,0 +1,433 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+:root { font-family: Inter, Arial, sans-serif; color: #f4edf3; background: #10121a; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+button { font: inherit; cursor: pointer; }
+button:focus-visible { outline: 3px solid #eeb7c6; outline-offset: 3px; }
+.app { min-height: 100vh; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+.background { position: fixed; inset: 0; background-color: #282b3b; background-size: cover; background-position: center; z-index: -2; }
+.background:after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,8,14,.35), transparent 34%, rgba(5,6,12,.45) 100%); }
+.probe { display: none; }
+.missing { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; color: #bcb8c5; line-height: 2; }
+.missing code { font-size: 12px; }
+header { position: relative; z-index: 6; display: flex; justify-content: space-between; align-items: center; padding: 13px clamp(18px,3vw,55px); background: #090b13d9; backdrop-filter: blur(10px); gap: 16px; min-height: 68px; }
+.brand { display: flex; align-items: center; flex-wrap: wrap; gap: 20px; font-family: 'Cormorant Garamond',Georgia,serif; letter-spacing: 3px; font-size: 25px; font-weight: 700; }
+.chapter-inline { display: flex; align-items: center; gap: 9px; font: 600 11px Inter,Arial,sans-serif; letter-spacing: 1.5px; color: #e2c1c9; }
+.chapter-divider { opacity: .55; }
+.top-actions { display: flex; gap: 9px; }
+.top-actions button,.close { border: 1px solid #ffffff45; border-radius: 8px; padding: 9px 13px; background: #191c2acc; color: white; }
+.sprite { position: absolute; z-index: 1; height: min(81vh,900px); max-width: 70vw; object-fit: contain; object-position: bottom center; bottom: 0; left: 50%; transform: translateX(-50%); filter: drop-shadow(0 15px 20px #0009); pointer-events: none; }
+.stage { position: relative; z-index: 3; width: 100%; margin: auto 0 0; }
+.stage-exploration { pointer-events: none; }
+.dialogue,.choices { background: #101422f2; backdrop-filter: blur(16px); border-top: 1px solid #e0c3ce48; box-shadow: 0 -10px 50px #0008; }
+.dialogue { width: 100%; min-height: 158px; padding: 18px clamp(22px,10vw,170px) 17px; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 4px 22px; }
+.speaker { grid-column: 1 / -1; font-weight: 700; color: #f2c5ce; letter-spacing: .5px; }
+.dialogue p { grid-column: 1; font-size: 16px; line-height: 1.65; margin: 0; max-width: 1100px; align-self: start; }
+.dialogue button,.primary { align-self: end; margin-left: auto; background: #a74f68; border: 0; color: #fff; border-radius: 8px; padding: 11px 20px; }
+.dialogue button span { font-size: 24px; vertical-align: middle; margin-left: 12px; }
+.narrative p { font-style: italic; }
+.choices { width: 100%; padding: 20px clamp(22px,17vw,300px) 25px; max-height: 55vh; overflow-y: auto; }
+.choices h2,.modal h2 { font: 600 25px 'Cormorant Garamond',Georgia,serif; margin: 0 0 9px; }
+.choices p,.hint { line-height: 1.5; color: #d1c9d0; }
+.choices>button,.wide { display: block; width: 100%; text-align: left; background: #ffffff0d; color: #fff; border: 1px solid #ffffff35; border-radius: 9px; padding: 11px 16px; margin-top: 8px; }
+.choices>button:hover,.wide:hover { background: #9d536a55; border-color: #f4bdcd; }
+.primary:disabled { opacity: .55; cursor: not-allowed; }
+.outfits { display: flex; gap: 18px; justify-content: center; }
+.outfits button { display: flex; flex-direction: column; align-items: center; gap: 8px; border: 1px solid #ffffff40; background: #ffffff12; border-radius: 10px; color: white; padding: 10px; }
+.outfits img { height: 165px; max-width: 145px; object-fit: contain; }
+.exploration-overlay { position: absolute; z-index: 2; inset: 68px 0 0; pointer-events: none; }
+.exploration-hint { position: absolute; top: 20px; left: clamp(20px,5vw,90px); display: flex; flex-direction: column; gap: 5px; text-shadow: 0 2px 9px #000; }
+.exploration-hint span { font-size: 10px; letter-spacing: 2.5px; color: #e8b8c7; }
+.exploration-hint strong { font: 600 25px 'Cormorant Garamond',Georgia,serif; }
+.exploration-hint small { color: #e7dbe0; }
+.hotspot-area { position: absolute; inset: 0 0 100px; }
+.hotspot { position: absolute; transform: translate(-50%,-50%); pointer-events: auto; border: 0; background: transparent; padding: 16px; color: white; }
+.hotspot-dot { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 50%; border: 2px solid #f2c7d4; background: #823c60d9; box-shadow: 0 0 0 6px #e5a8be33,0 5px 20px #000a; font-size: 21px; transition: transform .2s,background .2s; }
+.travel-hotspot .hotspot-dot { background: #1d2942df; }
+.hotspot:hover .hotspot-dot,.hotspot:focus-visible .hotspot-dot { transform: scale(1.17); background: #b35879; }
+.hotspot-tooltip { position: absolute; left: 50%; bottom: calc(100% - 6px); transform: translateX(-50%); white-space: nowrap; background: #101422f2; border: 1px solid #e4bacb70; border-radius: 7px; padding: 8px 12px; opacity: 0; transition: opacity .16s; pointer-events: none; font-size: 13px; }
+.hotspot:hover .hotspot-tooltip,.hotspot:focus-visible .hotspot-tooltip { opacity: 1; }
+.exploration-bottom { position: absolute; bottom: 22px; left: 5vw; right: 5vw; display: flex; gap: 18px; align-items: center; justify-content: space-between; }
+.exploration-progress { color: #fff; font-size: 12px; background: #101422cc; padding: 10px 14px; border-radius: 7px; }
+.exploration-bottom button { pointer-events: auto; }
+.modalshade { position: fixed; inset: 0; background: #06070cbd; z-index: 20; display: grid; place-items: center; padding: 18px; }
+.modal { position: relative; background: #1c2030; border: 1px solid #c6a3b255; border-radius: 16px; width: min(530px,100%); max-height: 85vh; overflow: auto; padding: 28px; }
+.close { position: absolute; right: 14px; top: 14px; }
+.rel { border-top: 1px solid #ffffff26; padding: 14px 0; display: flex; flex-direction: column; gap: 6px; }
+.rel span { color: #c8bdc7; font-size: 13px; }
+.danger { color: #f7adb9; }
+.toast { position: fixed; right: 20px; top: 85px; padding: 12px 20px; border-radius: 8px; background: #343b40; z-index: 10; }
+@media(max-width:650px) { header { flex-wrap: wrap; padding: 11px 15px; } .brand { font-size: 20px; gap: 8px; } .chapter-inline { font-size: 9px; } .top-actions button { padding: 7px; font-size: 12px; } .sprite { height: 69vh; max-width: 95vw; } .dialogue { padding: 13px 18px 15px; grid-template-columns: 1fr; gap: 9px; min-height: 155px; } .dialogue p { font-size: 14px; } .dialogue button { padding: 8px 13px; } .choices { padding: 18px; max-height: 65vh; } .outfits img { height: 115px; } .exploration-overlay { top: 100px; } .exploration-bottom { flex-direction: column; align-items: stretch; bottom: 12px; } .exploration-bottom button { margin: 0; } .hotspot-dot { width: 38px; height: 38px; } }
+
+
+/* ===== Version 3 : interface façon visual novel ===== */
+.background { background-color: #000; }
+.background-missing { background-image: none !important; background-color: #000; }
+.background-missing::after { display: none; }
+.sprite {
+  left: clamp(120px, 26vw, 460px);
+  bottom: 124px;
+  height: min(59vh, 620px);
+  max-width: 48vw;
+  transform: translateX(-50%);
+  object-fit: contain;
+  object-position: center bottom;
+  z-index: 1;
+}
+.stage { z-index: 4; }
+.dialogue {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 130px;
+  padding: 14px clamp(20px, 5vw, 90px);
+  border-radius: 0;
+}
+.dialogue-copy { flex: 1; min-width: 0; align-self: center; }
+.dialogue .speaker { margin-bottom: 8px; }
+.dialogue p { margin: 0; line-height: 1.55; font-size: 16px; }
+.dialogue button { flex: none; align-self: center; margin-left: auto; }
+.portrait {
+  flex: 0 0 92px;
+  width: 92px;
+  height: 96px;
+  border: 2px solid #d8a8bd;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #35303b;
+  box-shadow: 0 4px 20px #0008;
+}
+.portrait img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transform: scale(1.75);
+  transform-origin: center 12%;
+}
+.thought-dialogue {
+  background: rgba(245, 244, 243, .89);
+  color: #26232d;
+  border-top: 2px solid rgba(255,255,255,.95);
+  box-shadow: 0 -8px 36px #1116;
+}
+.thought-dialogue .speaker { color: #69536a; }
+.thought-dialogue p { font-style: italic; }
+.thought-dialogue button { background: #786277; }
+.exploration-overlay { z-index: 3; }
+.exploration-objective {
+  position: absolute; bottom: 24px; left: 5vw;
+  background: #101422d9; padding: 10px 14px;
+  border-radius: 8px; color: #f1dce5; font-size: 13px;
+}
+.exit-hotspot .hotspot-dot { background: #a74f68; }
+@media (max-width: 650px) {
+  .sprite { left: 35%; height: 54vh; max-width: 82vw; bottom: 142px; }
+  .dialogue { padding: 12px 14px; min-height: 145px; gap: 10px; }
+  .portrait { flex-basis: 62px; width: 62px; height: 70px; }
+  .dialogue p { font-size: 13px; }
+  .dialogue button { font-size: 12px; padding: 8px; }
+}
+
+
+/* ===== Version 4 : cadrage et narration ===== */
+/* Le sprite reste derriere la barre de dialogue. On recadre
+   les jambes sans modifier les PNG originaux. */
+.sprite {
+  left: clamp(90px, 17vw, 285px);
+  height: min(83vh, 850px);
+  max-width: 58vw;
+  bottom: calc(130px - min(24vh, 245px));
+  clip-path: inset(0 0 29% 0);
+  object-position: center bottom;
+  transform: translateX(-50%);
+}
+/* Portrait : recadrage serre sur le haut du personnage. */
+.portrait {
+  position: relative;
+  flex: 0 0 96px;
+  width: 96px;
+  height: 96px;
+  border-radius: 11px;
+  isolation: isolate;
+}
+.portrait img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center top;
+  transform: scale(3.35);
+  transform-origin: center 8%;
+}
+/* Le journal a sa propre identite, sans ressembler a un dialogue. */
+.journal-dialogue {
+  background: linear-gradient(110deg, rgba(38,31,39,.95), rgba(29,27,37,.93));
+  border-top: 1px solid rgba(229,203,172,.62);
+}
+.journal-dialogue .speaker {
+  color: #e9cfac;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  letter-spacing: .045em;
+}
+.journal-dialogue p {
+  font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
+  font-style: italic;
+  font-size: clamp(17px, 1.4vw, 21px);
+  line-height: 1.7;
+  letter-spacing: .018em;
+}
+/* Pensees : fond clair conserve, halo diffus de fumee blanche. */
+.thought-dialogue {
+  isolation: isolate;
+  background: rgba(245,244,243,.89);
+  border-top: 1px solid rgba(255,255,255,.96);
+  box-shadow: 0 -12px 50px 16px rgba(245,245,245,.25),
+              0 -28px 65px 20px rgba(255,255,255,.12);
+}
+.thought-dialogue::before {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  left: 0; right: 0; bottom: 75%; height: 110px;
+  background: radial-gradient(ellipse at 15% 100%, rgba(255,255,255,.54), transparent 68%),
+              radial-gradient(ellipse at 55% 100%, rgba(255,255,255,.40), transparent 72%),
+              radial-gradient(ellipse at 88% 100%, rgba(255,255,255,.49), transparent 67%);
+  filter: blur(20px);
+}
+@media (max-width: 650px) {
+  .sprite {
+    left: 27%;
+    height: 72vh;
+    max-width: 88vw;
+    bottom: calc(145px - 21vh);
+    clip-path: inset(0 0 29% 0);
+  }
+  .portrait { flex-basis: 68px; width: 68px; height: 72px; }
+  .portrait img { transform: scale(3.3); }
+  .journal-dialogue p { font-size: 16px; }
+}
+
+
+/* ===== Version 5 : pensées discrètes, garde-robe plein écran ===== */
+.thought-dialogue {
+  background: #101422f2;
+  color: #f4edf3;
+  border-top: 1px solid rgba(239,229,237,.44);
+  box-shadow: 0 -12px 45px rgba(240,242,245,.19),
+              0 -30px 65px rgba(245,246,249,.12);
+}
+.thought-dialogue .speaker { color: #e4cbd7; }
+.thought-dialogue p { color: #f2edf3; font-style: italic; }
+.thought-dialogue::before {
+  bottom: 80%; height: 130px;
+  background: radial-gradient(ellipse at 13% 100%, rgba(255,255,255,.40), transparent 70%),
+              radial-gradient(ellipse at 47% 100%, rgba(255,255,255,.25), transparent 73%),
+              radial-gradient(ellipse at 83% 100%, rgba(255,255,255,.36), transparent 69%);
+  filter: blur(23px);
+}
+.thought-dialogue button { background: #a74f68; }
+/* Portraits recadrés dans public/portraits, sans modifier les PNG d'origine. */
+.portrait img { object-fit: cover; object-position: center center; transform: none; }
+/* La garde-robe flotte sur le décor, sans boîte de dialogue en bas. */
+.wardrobe-stage { position: absolute; inset: 68px 0 0; margin: 0; pointer-events: none; }
+.wardrobe { height: 100%; display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; padding: 25px clamp(22px,5vw,95px); pointer-events: none; }
+.wardrobe-caption { align-self: center; max-width: 350px; padding: 23px 28px;
+  background: rgba(13,16,27,.78); backdrop-filter: blur(12px); border-radius: 14px; }
+.wardrobe-caption span { font-size: 11px; letter-spacing: 2px; color: #e4b7c7; }
+.wardrobe-caption h2 { font: 600 clamp(25px,3vw,42px) 'Cormorant Garamond',Georgia,serif; margin: 10px 0; }
+.wardrobe-caption p { line-height: 1.6; color: #ded4dd; margin: 0; }
+.wardrobe-options { display: flex; align-items: center; justify-content: flex-end; gap: 18px;
+  height: min(78vh,720px); max-width: 65%; pointer-events: auto; }
+.wardrobe-card { width: clamp(165px,17vw,285px); height: 100%; display: flex; flex-direction: column;
+  justify-content: flex-end; align-items: center; overflow: hidden; color: white;
+  border: 1px solid rgba(240,197,216,.55); border-radius: 16px;
+  background: linear-gradient(180deg,rgba(25,25,35,.15),rgba(18,18,30,.8));
+  backdrop-filter: blur(5px); padding: 8px; transition: transform .18s,border-color .18s; }
+.wardrobe-card:hover,.wardrobe-card:focus-visible { transform: translateY(-7px); border-color: #ffd8e5; }
+.wardrobe-card img { width: 100%; height: calc(100% - 56px); object-fit: contain; object-position: center bottom; }
+.wardrobe-card span { display: flex; justify-content: space-between; align-items: center;
+  width: 100%; padding: 12px 8px; gap: 10px; font-weight: 600; }
+.wardrobe-card b { font-size: 12px; color: #f4c0d0; }
+@media(max-width:750px) {
+  .wardrobe { flex-direction: column; justify-content: center; gap: 14px; padding: 12px; }
+  .wardrobe-caption { align-self: stretch; max-width: none; padding: 12px 18px; }
+  .wardrobe-caption h2 { font-size: 25px; margin: 5px 0; }
+  .wardrobe-caption p { font-size: 13px; }
+  .wardrobe-options { max-width: 100%; height: min(58vh,530px); gap: 10px; }
+  .wardrobe-card { width: min(43vw,240px); }
+}
+
+
+/* ===== Version 6 : personnages, pensées et portraits ===== */
+
+/* Le personnage se rapproche du bord gauche et gagne en largeur,
+   sans modifier sa hauteur ni le niveau de coupe aux hanches. */
+.sprite {
+  left: clamp(110px, 17.5vw, 305px);
+  transform: translateX(-50%) scaleX(1.12);
+  transform-origin: center bottom;
+}
+
+/* Une pensée est une bulle indépendante posée sur le décor :
+   aucune fumée, et aucune modification de la barre de dialogue normale. */
+.stage:has(> .thought-dialogue) {
+  position: static;
+}
+.dialogue.thought-dialogue {
+  position: fixed;
+  z-index: 8;
+  top: clamp(115px, 23vh, 260px);
+  left: clamp(24px, 34vw, 620px);
+  bottom: auto;
+  width: min(540px, 60vw);
+  min-height: 0;
+  padding: 23px 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  border: 1px solid rgba(255,255,255,.92);
+  border-radius: 26px 26px 26px 6px;
+  background: rgba(255,255,255,.96);
+  color: #282330;
+  box-shadow: 0 12px 38px rgba(0,0,0,.28);
+  backdrop-filter: none;
+}
+.dialogue.thought-dialogue::before {
+  display: none;
+  content: none;
+}
+.thought-dialogue .speaker {
+  width: 100%;
+  margin: 0;
+  color: #8e536f;
+  font-style: italic;
+}
+.thought-dialogue p {
+  color: #282330;
+  font-style: italic;
+  flex: 1 1 100%;
+}
+.thought-dialogue button {
+  margin-left: auto;
+  padding: 8px 16px;
+  background: #a74f68;
+  color: white;
+}
+
+/* Portrait temporaire depuis le PNG d'origine. Aucun portrait
+   généré : les futures images dédiées pourront le remplacer. */
+.portrait img {
+  object-fit: contain;
+  object-position: center top;
+  transform: scale(3.15);
+  transform-origin: center 9%;
+}
+
+@media (max-width: 650px) {
+  .sprite {
+    left: 21%;
+    transform: translateX(-50%) scaleX(1.08);
+  }
+  .dialogue.thought-dialogue {
+    top: 20vh;
+    left: 5vw;
+    width: 90vw;
+    padding: 18px 20px;
+  }
+}
+
+
+/* VERSION 7 — petite bulle de pensée nuageuse sur le décor */
+.dialogue.thought-dialogue {
+  position: fixed; z-index: 9; top: clamp(115px, 20vh, 225px);
+  left: clamp(180px, 37vw, 650px); right: auto; bottom: auto;
+  width: min(355px, 48vw); min-height: 0;
+  padding: 24px 25px 20px; border: 0; border-radius: 46% 44% 43% 42% / 30% 35% 30% 33%;
+  background: #fffaf7; color: #302b36;
+  box-shadow: 0 9px 30px #0005, 0 0 0 6px #fffaf7aa;
+  backdrop-filter: none; display: flex; flex-direction: column; gap: 6px;
+  align-items: center; text-align: center;
+}
+.dialogue.thought-dialogue::before {
+  display: block; content: ''; position: absolute;
+  width: 27px; height: 27px; left: -17px; bottom: -17px;
+  border-radius: 50%; background: #fffaf7; box-shadow: -22px 21px 0 -7px #fffaf7;
+}
+.dialogue.thought-dialogue::after {
+  content: ''; position: absolute; z-index: -1; inset: -10px 6px;
+  border-radius: 48%; background: #fffaf7;
+}
+.thought-dialogue .dialogue-copy { width: 100%; }
+.thought-dialogue .speaker { color: #85586d; font-size: 12px; margin-bottom: 5px; }
+.thought-dialogue p { color: #302b36; font-style: italic; font-size: 14px; line-height: 1.45; }
+.thought-dialogue button { align-self: center; margin: 5px 0 0; padding: 6px 12px; font-size: 12px; }
+@media(max-width:650px) {
+  .dialogue.thought-dialogue { top: 17vh; left: 35vw; width: 61vw; padding: 18px 15px; }
+}
+
+
+/* VERSION 8 — bulle de pensée calquée sur la référence fournie :
+   rectangle blanc, coins légèrement arrondis, petite pointe en bas à droite. */
+.dialogue.thought-dialogue {
+  position: fixed;
+  z-index: 9;
+  top: clamp(130px, 24vh, 270px);
+  left: clamp(195px, 36vw, 640px);
+  right: auto;
+  bottom: auto;
+  width: min(330px, 46vw);
+  min-height: 0;
+  padding: 16px 18px 13px;
+  border: 2px solid #37313a;
+  border-radius: 13px;
+  background: #fffdfb;
+  color: #29252d;
+  box-shadow: 0 8px 24px rgba(0,0,0,.22);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  text-align: left;
+  backdrop-filter: none;
+}
+.dialogue.thought-dialogue::before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: auto;
+  right: 21px;
+  bottom: -16px;
+  width: 20px;
+  height: 17px;
+  border-radius: 0;
+  background: #37313a;
+  box-shadow: none;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+.dialogue.thought-dialogue::after {
+  content: '';
+  display: block;
+  position: absolute;
+  z-index: 1;
+  inset: auto;
+  left: auto;
+  right: 23px;
+  bottom: -11px;
+  width: 15px;
+  height: 13px;
+  border-radius: 0;
+  background: #fffdfb;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+.thought-dialogue .dialogue-copy { width: 100%; }
+.thought-dialogue .speaker { color: #86536a; font-size: 12px; margin: 0 0 5px; font-style: italic; }
+.thought-dialogue p { color: #29252d; font-size: 14px; line-height: 1.45; font-style: italic; }
+.thought-dialogue button { align-self: flex-end; margin: 7px 0 0; padding: 5px 10px; font-size: 12px; }
+@media(max-width:650px) {
+  .dialogue.thought-dialogue { top: 18vh; left: 29vw; width: 66vw; padding: 13px 15px; }
+}
